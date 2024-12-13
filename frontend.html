@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="chat"></div>
+    <div id="messageInput">
+        <input type="text" id="message" placeholder="Type your message here...">
+        <button id="sendButton">Send</button>
+    </div>
+
+    <script>
+        const chat = document.getElementById('chat');
+        const messageInput = document.getElementById('message');
+        const sendButton = document.getElementById('sendButton');
+
+        const socket = new WebSocket('ws://localhost:8080');
+
+        socket.onmessage = (event) => {
+    try {
+        const data = JSON.parse(event.data); // Attempt to parse the incoming message
+        const messageElement = document.createElement('div');
+        messageElement.textContent = data.message;
+        chat.appendChild(messageElement);
+        chat.scrollTop = chat.scrollHeight; // Auto-scroll
+    } catch (error) {
+        console.error('Failed to parse message:', event.data);
+    }
+};
+
+        const sendMessage = () => {
+            const message = messageInput.value;
+            if (message.trim()) {
+                socket.send(JSON.stringify({ message }));
+                messageInput.value = '';
+            }
+        };
+
+        sendButton.addEventListener('click', sendMessage);
+        messageInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
