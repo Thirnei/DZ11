@@ -17,29 +17,24 @@
         const chat = document.getElementById('chat');
         const messageInput = document.getElementById('message');
         const sendButton = document.getElementById('sendButton');
-
+    
         const socket = new WebSocket('ws://localhost:8080');
-
+    
         socket.onmessage = (event) => {
-    try {
-        const data = JSON.parse(event.data); // Attempt to parse the incoming message
-        const messageElement = document.createElement('div');
-        messageElement.textContent = data.message;
-        chat.appendChild(messageElement);
-        chat.scrollTop = chat.scrollHeight; // Auto-scroll
-    } catch (error) {
-        console.error('Failed to parse message:', event.data);
-    }
-};
-
+            const messageElement = document.createElement('div');
+            messageElement.textContent = event.data; // Просто используем текст из event.data
+            chat.appendChild(messageElement);
+            chat.scrollTop = chat.scrollHeight; // Автопрокрутка
+        };
+    
         const sendMessage = () => {
             const message = messageInput.value;
             if (message.trim()) {
-                socket.send(JSON.stringify({ message }));
+                socket.send(message); // Отправляем только текст
                 messageInput.value = '';
             }
         };
-
+    
         sendButton.addEventListener('click', sendMessage);
         messageInput.addEventListener('keypress', (event) => {
             if (event.key === 'Enter') {

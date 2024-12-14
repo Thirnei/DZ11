@@ -12,15 +12,15 @@ server.on('connection', (ws) => {
     console.log('New client connected');
 
     // Send welcome message to the new client
-    ws.send(JSON.stringify({ message: 'Welcome to the chat!' }));
+    ws.send('Welcome to the chat!'); // Отправляем как текст
 
     ws.on('message', (data) => {
         console.log(`Received message: ${data}`);
     
-        // Broadcast the message to all connected clients in JSON format
+        // Broadcast the message to all connected clients
         for (const client of clients) {
             if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify({ message: data.toString() })); // Ensure data is sent as JSON
+                client.send(data.toString()); // Отправляем как текст
             }
         }
     });
